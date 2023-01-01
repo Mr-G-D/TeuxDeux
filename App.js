@@ -1,10 +1,31 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { colors } from "./Colors";
 import { AntDesign } from "@expo/vector-icons";
+import { useState } from "react";
+import AddListModal from "./components/AddListModal";
+import { tempData } from "./tempData";
+import TodoList from "./components/TodoList";
+
 export default function App() {
+  const [modalVisibility, setModalVisibility] = useState(false);
   return (
     <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        visible={modalVisibility}
+        onRequestClose={() => setModalVisibility(!modalVisibility)}
+      >
+        <AddListModal setModalVisibility={setModalVisibility} />
+      </Modal>
+
       <View style={{ flexDirection: "row" }}>
         <View style={styles.divider} />
         <Text style={styles.title}>
@@ -22,11 +43,24 @@ export default function App() {
       </View>
 
       <View style={{ marginVertical: 48 }}>
-        <TouchableOpacity style={styles.addList}>
+        <TouchableOpacity
+          style={styles.addList}
+          onPress={() => setModalVisibility(true)}
+        >
           <AntDesign name="plus" size={16} color={colors.blue} />
         </TouchableOpacity>
 
         <Text style={styles.add}>Add List</Text>
+      </View>
+
+      <View style={{ height: 275, paddingLeft: 32 }}>
+        <FlatList
+          data={tempData}
+          key={(item) => item.name}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => <TodoList list={item} />}
+        />
       </View>
     </View>
   );
