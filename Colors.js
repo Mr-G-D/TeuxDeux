@@ -3,6 +3,7 @@ export const colors = {
   blue: "#24a6d9",
   lightblue: "#a7cbd9",
   white: "#fff",
+  gray: "#a4a4a4",
 };
 
 export const backgroundColors = [

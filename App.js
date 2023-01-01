@@ -16,6 +16,7 @@ import TodoList from "./components/TodoList";
 
 export default function App() {
   const [modalVisibility, setModalVisibility] = useState(false);
+
   return (
     <View style={styles.container}>
       <Modal
