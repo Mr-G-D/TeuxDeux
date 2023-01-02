@@ -21,6 +21,7 @@ export default function AddListModal({ setModalVisibility, createList }) {
   const AddNewList = () => {
     createList(
       (item = {
+        id: Date.now() % 1000,
         name: todo.name,
         color: todo.color,
         todos: [],

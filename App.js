@@ -9,17 +9,49 @@ import {
 } from "react-native";
 import { colors } from "./Colors";
 import { AntDesign } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddListModal from "./components/AddListModal";
 import { tempData } from "./tempData";
 import TodoList from "./components/TodoList";
+import { createData, readData, updateData } from "./firebase";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { db } from "./db";
 
 export default function App() {
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [data, setData] = useState(tempData);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const res = await readData("data");
+      setData(res);
+    };
+    getData();
+  }, []);
+
+  // useEffect(() => {
+  //   const check = async (chunk) => {
+  //     try {
+  //       const collectionRef = collection(db, "data");
+  //       await chunk.forEach((element) => {
+  //         addDoc(collectionRef, element);
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   check(data);
+  // }, [data]);
 
   const createList = (item) => {
     setData([...data, item]);
+    try {
+      const collectionRef = collection(db, "data");
+
+      addDoc(collectionRef, item);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updateList = (item) => {
@@ -31,6 +63,11 @@ export default function App() {
         return obj;
       }),
     );
+    try {
+      updateData("data", item.id, item);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -73,7 +110,7 @@ export default function App() {
         <Text style={styles.add}>Add List</Text>
       </View>
 
-      <View style={{ height: 275, paddingLeft: 32 }}>
+      <View style={{ height: 275, paddingLeft: 0 }}>
         <FlatList
           data={data}
           key={(item) => item.name}

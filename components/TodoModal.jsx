@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
@@ -30,6 +31,7 @@ export default function TodoModal({ setListVisibility, updateItem, item }) {
       },
     ]);
     setTodo("");
+    Keyboard.dismiss();
   };
 
   const taskUpdate = (id) => {
