@@ -16,10 +16,15 @@ export default function TodoModal({ setListVisibility, updateItem, item }) {
   const [chunk, setChunk] = useState(item.todos);
   const [todo, setTodo] = useState("");
 
+  useEffect(() => {
+    updateItem(chunk);
+  }, [chunk]);
+
   const createTodo = (todo) => {
     setChunk([
       ...chunk,
       {
+        id: Date.now() % 1000,
         title: todo,
         completed: false,
       },
@@ -27,14 +32,21 @@ export default function TodoModal({ setListVisibility, updateItem, item }) {
     setTodo("");
   };
 
-  useEffect(() => {
-    updateItem(chunk);
-  }, [chunk]);
+  const taskUpdate = (id) => {
+    setChunk((curr) =>
+      curr.map((obj) => {
+        if (obj.id === id) {
+          return { ...obj, completed: !obj.completed };
+        }
+        return obj;
+      }),
+    );
+  };
 
   const renderTodo = (item) => {
     return (
       <View style={styles.todoContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => taskUpdate(item.id)}>
           <Ionicons
             name={item.completed ? "ios-square" : "ios-square-outline"}
             size={24}
