@@ -12,18 +12,20 @@ import { backgroundColors, colors } from "../Colors";
 import { AntDesign } from "@expo/vector-icons";
 import { tempData } from "../tempData";
 
-export default function AddListModal({ setModalVisibility }) {
+export default function AddListModal({ setModalVisibility, createList }) {
   const [todo, setTodo] = useState({
     name: "",
     color: backgroundColors[0],
   });
 
   const AddNewList = () => {
-    tempData.push({
-      name: todo.name,
-      color: todo.color,
-      todos: [],
-    });
+    createList(
+      (item = {
+        name: todo.name,
+        color: todo.color,
+        todos: [],
+      }),
+    );
     setModalVisibility(false);
   };
 

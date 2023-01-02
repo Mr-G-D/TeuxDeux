@@ -16,6 +16,22 @@ import TodoList from "./components/TodoList";
 
 export default function App() {
   const [modalVisibility, setModalVisibility] = useState(false);
+  const [data, setData] = useState(tempData);
+
+  const createList = (item) => {
+    setData([...data, item]);
+  };
+
+  const updateList = (item) => {
+    setData((curr) =>
+      curr.map((obj) => {
+        if (obj.name === item.name) {
+          return { ...obj, todos: item.todos };
+        }
+        return obj;
+      }),
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -24,7 +40,10 @@ export default function App() {
         visible={modalVisibility}
         onRequestClose={() => setModalVisibility(!modalVisibility)}
       >
-        <AddListModal setModalVisibility={setModalVisibility} />
+        <AddListModal
+          setModalVisibility={setModalVisibility}
+          createList={createList}
+        />
       </Modal>
 
       <View style={{ flexDirection: "row" }}>
@@ -56,11 +75,14 @@ export default function App() {
 
       <View style={{ height: 275, paddingLeft: 32 }}>
         <FlatList
-          data={tempData}
+          data={data}
           key={(item) => item.name}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <TodoList list={item} />}
+          renderItem={({ item }) => (
+            <TodoList list={item} updateList={updateList} />
+          )}
+          keyboardShouldPersistTaps="always"
         />
       </View>
     </View>

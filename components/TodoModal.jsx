@@ -8,11 +8,29 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { colors } from "../Colors";
 
-export default function TodoModal({ setListVisibility, listVisibility, item }) {
+export default function TodoModal({ setListVisibility, updateItem, item }) {
+  const [chunk, setChunk] = useState(item.todos);
+  const [todo, setTodo] = useState("");
+
+  const createTodo = (todo) => {
+    setChunk([
+      ...chunk,
+      {
+        title: todo,
+        completed: false,
+      },
+    ]);
+    setTodo("");
+  };
+
+  useEffect(() => {
+    updateItem(chunk);
+  }, [chunk]);
+
   const renderTodo = (item) => {
     return (
       <View style={styles.todoContainer}>
@@ -40,51 +58,58 @@ export default function TodoModal({ setListVisibility, listVisibility, item }) {
     );
   };
   return (
-    <SafeAreaView style={styles.container} behavior="padding">
-      <TouchableOpacity
-        style={{ top: 15, right: -160 }}
-        onPress={() => setListVisibility(false)}
-      >
-        <AntDesign name="close" size={24} color={colors.black} />
-      </TouchableOpacity>
-
-      <View
-        style={[
-          styles.section,
-          styles.header,
-          { borderBottomColor: item.color },
-        ]}
-      >
-        <View>
-          <Text style={styles.title}>{item.name}</Text>
-          <Text style={styles.taskCount}>
-            {item.completedCount} of {item.taskCount} tasks
-          </Text>
-        </View>
-      </View>
-
-      <View style={[styles.section, { flex: 3 }]}>
-        <FlatList
-          data={item.todos}
-          renderItem={({ item }) => renderTodo(item)}
-          keyExtractor={(item) => item.title}
-          contentContainerStyle={{ paddingHorizontal: 32, paddingVertical: 64 }}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-
-      <KeyboardAvoidingView
-        style={[styles.section, styles.footer]}
-        behavior="padding"
-      >
-        <TextInput style={[styles.input, { borderColor: item.color }]} />
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <SafeAreaView style={styles.container} behavior="padding">
         <TouchableOpacity
-          style={[styles.addTodo, { backgroundColor: item.color }]}
+          style={{ top: 15, right: -160 }}
+          onPress={() => setListVisibility(false)}
         >
-          <AntDesign name="plus" size={16} color={colors.white} />
+          <AntDesign name="close" size={24} color={colors.black} />
         </TouchableOpacity>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+        <View
+          style={[
+            styles.section,
+            styles.header,
+            { borderBottomColor: item.color },
+          ]}
+        >
+          <View>
+            <Text style={styles.title}>{item.name}</Text>
+            <Text style={styles.taskCount}>
+              {item.completedCount} of {item.taskCount} tasks
+            </Text>
+          </View>
+        </View>
+
+        <View style={[styles.section, { flex: 3 }]}>
+          <FlatList
+            data={chunk}
+            renderItem={({ item }) => renderTodo(item)}
+            keyExtractor={(item) => item.title}
+            contentContainerStyle={{
+              paddingHorizontal: 32,
+              paddingVertical: 64,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+
+        <View style={[styles.section, styles.footer]}>
+          <TextInput
+            style={[styles.input, { borderColor: item.color }]}
+            onChangeText={(text) => setTodo(text)}
+            value={todo}
+          />
+          <TouchableOpacity
+            style={[styles.addTodo, { backgroundColor: item.color }]}
+            onPress={() => createTodo(todo)}
+          >
+            <AntDesign name="plus" size={16} color={colors.white} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 

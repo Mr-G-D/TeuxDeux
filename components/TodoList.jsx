@@ -6,27 +6,40 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { colors } from "../Colors";
 import TodoModal from "./TodoModal";
 
-const TodoList = ({ list }) => {
+const TodoList = ({ list, updateList }) => {
   const [listVisibility, setListVisibility] = useState(false);
+  const [item, setItem] = useState(list);
 
-  const completedCount = list.todos.filter((todo) => todo.completed).length;
-  const remainingCount = list.todos.length - completedCount;
+  const updateItem = (data) => {
+    setItem({ ...item, todos: data });
+  };
+
+  useEffect(() => {
+    updateList(item);
+  }, [item]);
+
+  const completedCount = item.todos.filter((todo) => todo.completed).length;
+  const remainingCount = item.todos.length - completedCount;
 
   return (
     <View>
       <Modal animationType="slide" visible={listVisibility}>
-        <TodoModal item={list} setListVisibility={setListVisibility} />
+        <TodoModal
+          item={item}
+          updateItem={updateItem}
+          setListVisibility={setListVisibility}
+        />
       </Modal>
       <TouchableOpacity
-        style={[styles.listContainer, { backgroundColor: list.color }]}
+        style={[styles.listContainer, { backgroundColor: item.color }]}
         onPress={() => setListVisibility(!listVisibility)}
       >
         <Text style={styles.listTitle} numberOfLines={1}>
-          {list.name}
+          {item.name}
         </Text>
 
         <View>
